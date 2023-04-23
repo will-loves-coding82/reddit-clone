@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 type SearchInputProps = {
-
+    
 };
 
 const SearchInput: React.FC<SearchInputProps> = () => {
