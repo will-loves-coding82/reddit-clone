@@ -2,8 +2,9 @@ import { authModalState } from '@/atoms/authModalAtom';
 import { Flex, Input, Button, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-
-
+import {useCreateUserWithEmailAndPassword} from 'react-firebase-hooks/auth'
+import {auth} from '../../../../firebase/clientApp'
+import { FIREBASE_ERRORS } from '@/firebase/errors';
 /*
 This syntax is often used in React to define the 
 type of the props that a component expects to 
@@ -21,19 +22,49 @@ type SignUpProps = {
 
 
 const SignUp: React.FC<SignUpProps> = () => {
+
+    // Method to update the modal state using Recoil
     const setAuthModalState = useSetRecoilState(authModalState)
-    const [signUpFrom, setSignUpForm] = useState({
+
+    // Sign Up Component state 
+    const [signUpForm, setSignUpForm] = useState({
         email: '',
         password: '',
         confirmPassword:''
     })
 
+    // Error state initialized to empty string
+    const [error, setError] = useState('');
+
+    // Authentication Hooks
+    const[
+        createUserWithEmailAndPassword,
+        user,
+        loading,
+        userError, 
+    ] = useCreateUserWithEmailAndPassword(auth)
+
     // Firebase handling
-    const onSubmit = () => {
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if(error) {
+            setError('')
+            return;
+        }
+
+        if(signUpForm.password !== signUpForm.confirmPassword) {
+            // throw an error 
+            setError('Passwords do not match')
+            return;
+        }
+
+        // otherwise we tell firebase to create the user
+        createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);
 
     }
 
-    // The event:..... argument to onChange is a TypeScript pattern
+    // The event: argument to onChange is a TypeScript pattern
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSignUpForm((prev) => ({
             ...prev,
@@ -106,13 +137,19 @@ const SignUp: React.FC<SignUpProps> = () => {
                 onChange={onChange}>
             </Input>
 
+            
+            <Text textAlign='center' color='red.500' fontSize='10pt'>
+            {(error || FIREBASE_ERRORS[userError?.message as keyof typeof FIREBASE_ERRORS])}
+            </Text>
+            
             <Button
                 height='36px'
                 width='100%'
                 mt={2}
                 mb={2}
-                type='submit'>
-                Log In</Button>
+                type='submit'
+                isLoading={loading}>
+                Sign Up</Button>
 
             <Flex fontSize='9pt' justify='center'>
                 <Text mr={1}>Already a redditor?</Text>

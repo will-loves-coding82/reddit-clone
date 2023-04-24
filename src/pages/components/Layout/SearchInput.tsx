@@ -1,17 +1,18 @@
 import { Flex, Input, InputGroup, InputLeftElement} from '@chakra-ui/react';
 import {SearchIcon} from "@chakra-ui/icons"
 import * as React from 'react';
+import { User } from 'firebase/auth';
 
 
 type SearchInputProps = {
-    
-};
+    user?: User | null;
+}
 
-const SearchInput: React.FC<SearchInputProps> = () => {
+const SearchInput: React.FC<SearchInputProps> = ({user}) => {
     return (
         // flexGrow tells the inputField to take up remaining space to the right
         // mr is marginRight
-        <Flex flexGrow={1} mr = {5} align="center">
+        <Flex flexGrow={1} mr = {3} align="center" maxWidth={user ? 'auto': '600px'}>
             <InputGroup >
                 {/*LeftElement is a ChakraUI name for any content palced
                    to the left of an inputfield */}

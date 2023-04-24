@@ -1,15 +1,22 @@
 import React from 'react';
 import { Flex, Image } from "@chakra-ui/react";
-import SearchInput from '../SearchInput'
-import RightContent from './RightContent/RightContent'
+import {useAuthState} from 'react-firebase-hooks/auth';
+import SearchInput from '../SearchInput';
+import RightContent from './RightContent/RightContent';
+import { auth } from '@/firebase/clientApp';
+import Directory from './Directory/Directory';
 // React.FC represents a Function Component
 const Navbar: React.FC = () => {
+
+    // Access the firebase auth object's state
+    const [user, loading, error] = useAuthState(auth)
+
     return (
         // flex is a div with css flexbox already applied to ti 
 
-        <Flex bg="white" height='44px' padding='6px 12px'>
+        <Flex bg="white" height='44px' padding='6px 12px' justify={{md:'space-between'}}>
 
-            <Flex align="center">
+            <Flex align="center" width={{base:'40px', md:'auto'}} mr={{base:0, md:2}}>
                 <Image src="/images/redditFace.svg"
                     alt='reddit face logo'
                     width="30"
@@ -30,10 +37,10 @@ const Navbar: React.FC = () => {
                 />
             </Flex>
 
-            {/*    <Directory/>
-            */}
-            <SearchInput />
-            <RightContent /> 
+            {user && <Directory/>}
+            <SearchInput user={user} />
+            {/* Pass the user as a prop to right content for dynamic button rendering */}
+            <RightContent user={user} /> 
         </Flex>
     )
 
