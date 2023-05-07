@@ -8,8 +8,9 @@ import { IoSparkles } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg'
 import { MdOutlineLogin } from 'react-icons/md'
 import { auth } from '@/firebase/clientApp';
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { authModalState } from '@/atoms/authModalAtom';
+import { communityState } from '@/atoms/communitiesAtom';
 
 type UserMenuProps = {
     user?: User | null;
@@ -18,6 +19,19 @@ type UserMenuProps = {
 const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
 
     const setAuthModalState = useSetRecoilState(authModalState);
+
+    // This will reset the CommunityState to its default value since logging out
+    // will trigger a useEffect inside the useCommunityData.tsx hook file. 
+    // That useEffect doesn't return anything nor change the communityState so we
+    // need to use recoil to access that state and reset it from here, which will then
+    // trickle down to other components like the Header.tsx which rely on it to update its contents
+    const resetCommunityState = useResetRecoilState(communityState)
+   
+    const logOut = async () => {
+        await signOut(auth);
+        console.log('signed out')
+        resetCommunityState();
+    }
 
     return (
         <Menu>
@@ -65,7 +79,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
 
                         <MenuItem fontSize='10pt' fontWeight={700}
                             _hover={{ bg: 'blue.500', color: 'white' }}
-                            onClick={() => signOut(auth)}
+                            onClick={logOut}
                         >
                             <Flex align='center' >
                                 <Icon as={MdOutlineLogin} fontSize={20} mr={2} />LogOut

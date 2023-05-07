@@ -26,6 +26,8 @@ type LoginProps = {
 
 const Login: React.FC<LoginProps> = () => {
 
+    // The Login component will be subscribed to the AuthModal's state
+    // to tell the modal to update its contents according to the user's actions
     const setAuthModalState = useSetRecoilState(authModalState)
     const [loginForm, setLoginForm] = useState({
         email: '',

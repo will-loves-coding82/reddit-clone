@@ -4,11 +4,10 @@ import { Menu, MenuButton, Button, MenuList, MenuItem, Icon, Flex, Text, MenuDiv
 import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import { authModalState } from '@/atoms/authModalAtom';
+import Communities from './CreateCommunity/Communities';
 
 
 const Directory: React.FC= () => {
-
-    const setAuthModalState = useSetRecoilState(authModalState);
 
     return (
         <Menu>
@@ -31,7 +30,7 @@ const Directory: React.FC= () => {
 
             </MenuButton>
             <MenuList>
-                Communities
+                <Communities/>
             </MenuList>
         </Menu>
     )
