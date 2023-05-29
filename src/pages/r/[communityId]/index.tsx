@@ -1,12 +1,15 @@
-import { Community } from '@/atoms/communitiesAtom';
+import { Community, communityState } from '@/atoms/communitiesAtom';
 import { firestore } from '@/firebase/clientApp';
+import About from '@/pages/components/Community/About';
 import Header from '@/pages/components/Community/Header';
 import CommunityNotFound from '@/pages/components/Community/NotFound';
 import PageContent from '@/pages/components/Layout/PageContent';
 import CreatePostLink from '@/pages/components/Modal/Auth/Community/CreatePostLink';
+import Posts from '@/pages/components/Posts/Posts';
 import { doc, getDoc } from 'firebase/firestore';
 import { GetServerSidePropsContext } from 'next';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import safeJsonStringify from 'safe-json-stringify'
 
 
@@ -16,20 +19,31 @@ type CommunityPageProps = {
 
 // This client side component will read in the props provided by next js server
  const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
+
+    const setCommunityStateValue = useSetRecoilState(communityState)
     if(!communityData) {
         return(
             <CommunityNotFound/>
         )
     }
+
+    useEffect(() => {
+        setCommunityStateValue( prev => ({
+            ...prev,
+            currentCommunity: communityData,
+        }))
+    })
     return (
         <>
             <Header communityData={communityData} />
             <PageContent>
                 <>
                 <CreatePostLink/>
+                <Posts communityData ={communityData}/>
+
                 </>
                 <>
-                <div>RHS</div>
+                <About  communityData ={communityData}/>
                 </>
             </PageContent>
         </>
